@@ -1,4 +1,5 @@
 import { IRender } from "./IRender";
+
 class PageView implements IRender{
   headerView: IRender;
   bodyView: IRender;
@@ -8,7 +9,7 @@ class PageView implements IRender{
     this.bodyView = bodyView;
   }
   render(model?: any): HTMLElement {
-    throw new Error("Method not implemented.");
+  throw new Error("Method not implemented.");
   }
 
 }

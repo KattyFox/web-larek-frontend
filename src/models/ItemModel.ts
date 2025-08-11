@@ -1,4 +1,4 @@
-class PageBodyItemModel{
+class ItemModel{
   public title:string;
   public category:string;
   public description: string;
@@ -16,4 +16,4 @@ class PageBodyItemModel{
 
 
 
-export {PageBodyItemModel};
+export {ItemModel};
