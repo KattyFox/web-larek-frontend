@@ -1,12 +1,39 @@
+import { ShopController } from "../controlers/ShopController";
 import { ItemModel } from "../models/ItemModel";
 
 class ItemShopView {
-  model: ItemModel;
+  private template: HTMLTemplateElement;
+  private shopController :ShopController;
 
-  constructor(model: ItemModel) {
-    this.model = model;
+  constructor( template: HTMLTemplateElement,
+    shopController : ShopController
+  ) {
+    this.template = template;
+    this.shopController = shopController;
   }
 
+  createCard( model : ItemModel): HTMLElement {
+    const card = this.template.content.cloneNode(true) as HTMLElement;
+    
+  const category = card.querySelector('.card__category');
+  if (category) category.textContent = model.category;
+  
+  const price = card.querySelector('.card__price');
+  if (price && model.price) price.textContent = model.price.toString();
+    
+  const title = card.querySelector('.card__title');
+  if (title) title.textContent = model.title;
+
+  const showButton = card.querySelector('.gallery__item');
+  if(showButton)
+  {
+    showButton.addEventListener('click',()=>{
+      this.shopController.clickOnShopItemToShow(model);
+    })
+  }
+
+  return card;
+}
   
 }
 

@@ -1,136 +1,81 @@
 import './scss/styles.scss';
-import { ShopModel } from './models/ShopModel';
-//import { PageBodyModel } from './models/PageBodyModel';
 import { ItemModel } from './models/ItemModel';
-import { ItemView } from './views/ItemView';
 import { Api } from './components/base/api';
 import { settings } from './utils/constants';
 import { BinModel } from './models/BinModel';
-import { BinView } from './views/BinView';
+import { BinIconView } from './views/BinIconView';
 import { BinController } from './controlers/BinControler';
+import { ItemShopView } from './views/ItemShopView';
+import { ShopView } from './views/ShopView';
+import { PopupView } from './views/PopupView';
+import { ItemPopupView } from './views/ItemPopupView';
+import { ShopController } from './controlers/ShopController';
+import { BinView } from './views/BinView';
+import { ItemCompactView } from './views/ItemCompactView';
+import { OrderModel } from './models/OrderModel';
+import { PayView } from './views/PayView';
+import { ContactView } from './views/ContactView';
+import { OrderDoneView } from './views/OrderDoneView';
+import { OrderController } from './controlers/OrderController';
 
-// Найти попап
-const modal = document.querySelector('.modal_active');
+// EVENTS
+const eventDispatcher:HTMLElement = document.createElement("div");
+// EVENTS
 
-// Скрыть
-modal.classList.remove('modal_active');
-// Или: modal.setAttribute('hidden', '');
+// POPUP
+const popupView = new PopupView( document.querySelector('#modal-container'));
+popupView.hide();
+// POPUP
+
+/// BIN
+const binModel = new BinModel([]);
+const binIconView = new BinIconView(document.querySelector(".header__basket"),
+eventDispatcher
+);
+const itemCompactView = new ItemCompactView(
+  document.querySelector("#card-basket"),
+  eventDispatcher
+)
+const binView = new BinView(
+  document.querySelector("#basket"),
+  itemCompactView , eventDispatcher
+)
+const binController = new BinController(binIconView,binModel,popupView,binView,eventDispatcher);
+/// BIN
+
+/// SHOP
+const itemPopupView = new ItemPopupView(
+  document.querySelector('#card-preview'), eventDispatcher);
+
+const shopController = new ShopController(
+  popupView,itemPopupView,binController, eventDispatcher)
 
 const gallery: HTMLElement = document.querySelector('.gallery');
-const itemTemplate: HTMLTemplateElement =
+const shopItemTemplate: HTMLTemplateElement =
 	document.querySelector('#card-catalog');
 
-const pageBodyView = new ItemView(itemTemplate, gallery);
-//const title = 'gvhvhj';
-//const category = 'yhyu';
-//const description = 'yhyu';
-//const image = 'yhyu';
-//const price = 'll444';
-//const newCard = pageBodyView.createCard(category, price, title);
-//const newCardSecond = pageBodyView.createCard(
-//	'Истерика',
-//	'Просто поучись в Практикуме',
-//	'+3 Инфаркта'
-//);
+const itemShopView = new ItemShopView(shopItemTemplate,shopController);
+const shopView = new ShopView( gallery,itemShopView);
+/// SHOP
 
+// ORDER
+const orderModel = new OrderModel();
+const payView = new PayView(document.querySelector("#order"), orderModel,eventDispatcher);
+const contactView = new ContactView(document.querySelector("#contacts"), orderModel,eventDispatcher);
+const orderDoneView = new OrderDoneView(document.querySelector("#success"), orderModel,eventDispatcher);
+const orderController = new OrderController(payView,contactView,orderDoneView,orderModel,eventDispatcher,popupView);
+// ORDER
 
-
-// gallery.appendChild(newCard);
-// gallery.appendChild(newCardSecond);
-
-// const items :PageBodyItemModel[] = [];
-// const model = new PageBodyModel(items);
-
-// //TEMPLATE
-// //title
-// const title = "gvhvhj";
-// //categoty
-// const category = "yhyu";
-// //description
-// const description = "yhyu";
-// //image
-// const image = "yhyu";
-// //price
-// const price = 34567;
-// //TEMPLATE
-// const template = new (#card-catalog);
-
-// //itemView
-
-// const modelView = ;
-// const logoId = "ggggg";
-
-// const itemView = new PageBodyItemView (modelView, logoId);
-
-// const pageBodyView = new PageBodyView(model, template, itemView);
-
-// const itemTemplate:HTMLTemplateElement = document.querySelector('#card-catalog');
-// const gallery: HTMLElement = document.querySelector('.gallery');
-
-// function createCard(categoryText?: string, priceText?: string, titleText?: string): HTMLElement {
-//     const card = itemTemplate.content.cloneNode(true) as HTMLElement;
-
-//     if (categoryText) {
-//         const category = card.querySelector('.card__category');
-//         if (category) category.textContent = categoryText;
-//     }
-
-//     if (priceText) {
-//         const price = card.querySelector('.card__price');
-//        if (price) price.textContent = priceText;
-//     }
-
-//     if (titleText) {
-//        const title = card.querySelector('.card__title');
-//        if (title) title.textContent = titleText;
-//     }
-
-//    return card;
-// }
-
-// // Использование:
-// gallery.appendChild(createCard()); // карточка по умолчанию
-// gallery.appendChild(createCard('Истерика', 'Просто поучись в Практикуме', '+3 Инфаркта'));
-// gallery.appendChild(createCard('Сделать карточку', '500 синапсов', '+1 Скилл'))
-
-// let price = result.querySelector('.card__price);
-
-//<template id="card-catalog">
-//		</button class="gallery__item card">
-//			<span class="card__category card__category_soft">софт-скил</span>
-//			<h2 class="card__title">+1 час в сутках</h2>
-//			<img class="card__image" src="<%=require('../images/Subtract.svg')%>" alt="" />
-//			<span class="card__price">750 синапсов</span>
-//		</button>
-//	</template>
-
-console.log('abc');
+// API REQUEST
+let storedItems:Array<ItemModel> = null;
 const api = new Api(settings.API_URL);
-api.get('/product/').then(( res: {items:[{category:string, price:string,title:string}], total:number} )=> {
-    console.log(res);
-
-    const items:[{category:string, price:string,title:string}] = res.items;
+api.get('/product/')
+.then(( res: {items:Array<ItemModel>, total:number} )=> {
+    const items:Array<ItemModel> = res.items;
       for(let i =0; i< res.total;i++){
         const card = items[i];
-        gallery.appendChild(pageBodyView.createCard(card.category, card.price, card.title));
+        shopView.appendCard(card);
       }
-
+      storedItems = items;
 });
-
-
-const binModel = new BinModel([]);
-const binView = new BinView(document.querySelector(".header__basket-counter"));
-const binController = new BinController(binView,binModel);
-
-document.addEventListener("keypress",(evt)=>{
-if(evt.key === "+" )
-{
-  binController.addItem(new ItemModel("a","b","c","d",1))
-}
-
-if(evt.key === "-" )
-{
-  binController.removeItem(new ItemModel("a","b","c","d",1))
-}
-
-});
+// API REQUEST
