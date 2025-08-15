@@ -10,7 +10,7 @@ class ShopController {
   eventDispatcher : HTMLElement;
 
   constructor(
-      popup:PopupView,
+  popup:PopupView,
   itemPopupView: ItemPopupView,
   binController:BinController,
    eventDispatcher : HTMLElement
