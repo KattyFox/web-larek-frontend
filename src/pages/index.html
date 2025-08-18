@@ -95,7 +95,7 @@
 				</div>
 				<label class="order__field">
 					<span class="form__label modal__title">Адрес доставки</span>
-					<input name="address" class="form__input" type="text" placeholder="Введите адрес" />
+					<input name="address" class="form__input" type="text" placeholder="Введите адрес" pattern="[А-Яа-я0-9 @._\-!#$%&*]+" data-error-message="Разрешены только кириллица, цифры и специальные символы @ . - _ ! # $ % & *" required/>
 				</label>
 			</div>
 			<div class="modal__actions">
@@ -111,11 +111,11 @@
 			<div class="order">
 				<label class="order__field">
 					<span class="form__label modal__title">Email</span>
-					<input name="email" class="form__input input_email" type="text" placeholder="Введите Email" />
+					<input name="email" class="form__input input_email" type="text" placeholder="Введите Email" pattern="[A-Za-z0-9 @.\-]+" required data-error-message="Разрешены только латинские буквы, цифры, пробелы и символы @ . - _" minlength="2" maxlength="40" required/>
 				</label>
 				<label class="order__field">
 					<span class="form__label modal__title">Телефон</span>
-					<input name="phone" class="form__input input_phone" type="text" placeholder="+7 (" />
+					<input name="phone" class="form__input input_phone" pattern="^\+?\d{10,15}$" type="tel" placeholder="+7" required />
 				</label>
 			</div>
 			<div class="modal__actions">

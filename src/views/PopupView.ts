@@ -7,7 +7,14 @@ class PopupView {
 
     this.modal.querySelector(".modal__close").addEventListener("click",()=>{
       this.hide();
-    })
+    });
+
+    this.modal.addEventListener("click", (e) => {
+      if (e.target === this.modal) {
+        this.hide();
+      }
+    });
+    
 	}
 
   show(newContent :HTMLElement ){

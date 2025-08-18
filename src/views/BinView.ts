@@ -5,6 +5,7 @@ class BinView{
   template: HTMLTemplateElement;
   itemCompactView :ItemCompactView;
   evenDispatcher: HTMLElement;
+  button :HTMLButtonElement;
 
 	constructor(element: HTMLTemplateElement, itemCompactView:ItemCompactView,
     eventDispatcher : HTMLElement
@@ -29,15 +30,22 @@ class BinView{
     });
     totalPriceLabel.textContent = totalPrice.toString() + " Синапсов";
 
-    const buyButton = instance.querySelector(".basket__button") as HTMLHtmlElement;
-    if(buyButton){
-      buyButton.addEventListener("click",()=>{
+    this.button = instance.querySelector(".basket__button") as HTMLButtonElement;
+    if(this.button){
+      this.button.addEventListener("click",()=>{
         const showBinEvent = new CustomEvent("buyButtonBin");
         this.evenDispatcher.dispatchEvent(showBinEvent);
       })
     }
 
+    this.validate(models);
     return instance;
+  }
+
+  validate(models:ItemModel[]){
+    const isValid =  models.length >0;
+    this.button.disabled = !isValid;
+    return isValid;
   }
 }
 

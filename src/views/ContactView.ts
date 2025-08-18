@@ -4,6 +4,11 @@ class ContactView{
   template :HTMLTemplateElement;
   model : OrderModel;
   eventDispatcher: HTMLElement;
+  
+  
+  button : HTMLButtonElement;
+  emailInput:HTMLInputElement;
+  phoneInput:HTMLInputElement;
 
   constructor(
      template :HTMLTemplateElement,
@@ -19,24 +24,35 @@ class ContactView{
   create(){
     const instance = this.template.content.cloneNode(true) as HTMLElement;
 
-    const inputEmail = instance.querySelector(".input_email") as HTMLInputElement;
-    inputEmail.addEventListener("input",()=>{
-      this.model.email = inputEmail.value;
+    this.emailInput = instance.querySelector(".input_email") as HTMLInputElement;
+    this.emailInput.addEventListener("input",()=>{
+      this.model.email = this.emailInput.value;
+      this.validate();
     });
 
-    const inputPhone = instance.querySelector(".input_phone") as HTMLInputElement;
-    inputPhone.addEventListener("input",()=>{
-      this.model.phone = inputPhone.value;
+    this.phoneInput= instance.querySelector(".input_phone") as HTMLInputElement;
+    this.phoneInput.addEventListener("input",()=>{
+      this.model.phone = this.phoneInput.value;
+      this.validate();
     });
 
 
-    const orderButton = instance.querySelector(".button") as HTMLElement;
-    orderButton.addEventListener("click",()=>{      
-      const contactViewDone = new CustomEvent("contactViewDone");
-      this.eventDispatcher.dispatchEvent(contactViewDone);
-    })
-    
-    return instance;
+      this.button = instance.querySelector(".button") as HTMLButtonElement;
+      this.button.addEventListener("click",()=>{      
+        const contactViewDone = new CustomEvent("contactViewDone");
+        this.eventDispatcher.dispatchEvent(contactViewDone);
+      })
+
+      this.validate();
+      
+      return instance;
+    }
+
+    validate(){
+      let isValid = this.emailInput.validity.valid;
+      isValid =  isValid && this.phoneInput.validity.valid;
+      this.button.disabled = !isValid;
+      return isValid;
   }
 }
 export{ContactView}

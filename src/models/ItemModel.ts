@@ -2,15 +2,17 @@ class ItemModel{
   public title:string;
   public category:string;
   public description: string;
-  public imageUrl:string;
   public price:number;
+  public image:string;
+  public id:string;
 
-  constructor(title: string, category: string,description: string, imageUrl: string, price: number) {
+  constructor(title: string, category: string,description: string, price: number, image :string , id:string) {
     this.title = title;
     this.category = category;
     this.description = description;
-    this.imageUrl = imageUrl;
     this.price = price;
+    this.image = image;
+    this.id = id;
   }
 }
 

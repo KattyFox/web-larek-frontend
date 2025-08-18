@@ -58,17 +58,22 @@ const itemShopView = new ItemShopView(shopItemTemplate,shopController);
 const shopView = new ShopView( gallery,itemShopView);
 /// SHOP
 
+// API 
+const api = new Api(settings.API_URL);
+// API
+
 // ORDER
 const orderModel = new OrderModel();
 const payView = new PayView(document.querySelector("#order"), orderModel,eventDispatcher);
 const contactView = new ContactView(document.querySelector("#contacts"), orderModel,eventDispatcher);
 const orderDoneView = new OrderDoneView(document.querySelector("#success"), orderModel,eventDispatcher);
-const orderController = new OrderController(payView,contactView,orderDoneView,orderModel,eventDispatcher,popupView);
+const orderController = new OrderController(payView,contactView,orderDoneView,orderModel,eventDispatcher,popupView , api);
 // ORDER
 
 // API REQUEST
 let storedItems:Array<ItemModel> = null;
-const api = new Api(settings.API_URL);
+
+try{
 api.get('/product/')
 .then(( res: {items:Array<ItemModel>, total:number} )=> {
     const items:Array<ItemModel> = res.items;
@@ -78,4 +83,8 @@ api.get('/product/')
       }
       storedItems = items;
 });
+} catch (error){
+  console.error(error);
+}
+
 // API REQUEST
