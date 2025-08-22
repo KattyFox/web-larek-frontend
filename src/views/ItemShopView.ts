@@ -14,18 +14,15 @@ class ItemShopView {
 	createCard(model: ItemModel): HTMLElement {
 		const card = this.template.content.cloneNode(true) as HTMLElement;
 
-		// model.image
-		// '/5_Dots.svg'
-
 		const category = card.querySelector('.card__category');
 		if (category) category.textContent = model.category;
 
 		const price = card.querySelector('.card__price');
 		if (price ) {
       if( model.price){
-          price.textContent = model.price.toString();
+					price.textContent = `${model.price.toString()} cинапсов`;
       } else {
-              price.textContent = "Бесценно.";   
+              price.textContent = "Бесценно";   
       }
     }
 

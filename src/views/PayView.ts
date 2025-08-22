@@ -1,73 +1,68 @@
+import { Form } from './Form';
 import { OrderModel } from '../models/OrderModel';
 
-class PayView {
-	template: HTMLTemplateElement;
-	model: OrderModel;
-	eventDispatcher: HTMLElement;
+class PayView extends Form {
+  private input: HTMLInputElement;
+  private buttonCash: HTMLElement;
+  private buttonCard: HTMLElement;
 
-	input: HTMLInputElement;
-	orderButton: HTMLButtonElement;
-	buttonCash: HTMLElement;
-	buttonCard: HTMLElement;
+  constructor(
+    template: HTMLTemplateElement,
+    model: OrderModel,
+    eventDispatcher: HTMLElement
+  ) {
+    super(template, model, eventDispatcher);
+  }
 
-	constructor(
-		template: HTMLTemplateElement,
-		model: OrderModel,
-		eventDispatcher: HTMLElement
-	) {
-		this.template = template;
-		this.model = model;
-		this.eventDispatcher = eventDispatcher;
-	}
+  create(): HTMLElement {
+    const instance = super.create() as HTMLElement;
 
-	create() {
-		const instance = this.template.content.cloneNode(true) as HTMLElement;
+    this.buttonCash = instance.querySelector('.pay_cash') as HTMLElement;
+    this.buttonCard = instance.querySelector('.pay_card') as HTMLElement;
+    this.input = instance.querySelector('.form__input') as HTMLInputElement;
 
-		this.buttonCash = instance.querySelector('.pay_cash') as HTMLElement;
-		this.buttonCard = instance.querySelector('.pay_card') as HTMLElement;
+    this.buttonCard.addEventListener('click', () => {
+      this.model.payCash = false;
+      this.model.payCard = true;
+      this.buttonCard.classList.add('button_alt-active');
+      this.buttonCash.classList.remove('button_alt-active');
+      this.validate();
+    });
 
-		this.buttonCard.addEventListener('click', () => {
-			this.model.payCash = false;
-			this.model.payCard = true;
-			this.buttonCard.classList.add('button_alt-active');
-			this.buttonCash.classList.remove('button_alt-active');
-			this.validate();
-		});
+    this.buttonCash.addEventListener('click', () => {
+      this.model.payCash = true;
+      this.model.payCard = false;
+      this.buttonCash.classList.add('button_alt-active');
+      this.buttonCard.classList.remove('button_alt-active');
+      this.validate();
+    });
 
-		this.buttonCash.addEventListener('click', () => {
-			this.model.payCash = true;
-			this.model.payCard = false;
-			this.buttonCash.classList.add('button_alt-active');
-			this.buttonCard.classList.remove('button_alt-active');
-			this.validate();
-		});
+    this.input.addEventListener('input', () => {
+      if (this.validate()) {
+        this.model.address = this.input.value;
+      }
+    });
 
-		this.input = instance.querySelector('.form__input') as HTMLInputElement;
-		this.input.addEventListener('input', () => {
-			if (this.validate()) {
-				this.model.address = this.input.value;
-			}
-		});
+    this.validate();
+    return instance;
+  }
 
-		this.orderButton = instance.querySelector(
-			'.order__button'
-		) as HTMLButtonElement;
-		this.orderButton.addEventListener('click', () => {
-			const payViewDone = new CustomEvent('payViewDone');
-			this.eventDispatcher.dispatchEvent(payViewDone);
-		});
+  protected handleSubmit(): void {
+    const payViewDone = new CustomEvent('payViewDone');
+    this.eventDispatcher.dispatchEvent(payViewDone);
+  }
 
-		this.validate();
-		return instance;
-	}
-
-	validate() {
-		let isValid = this.input.validity.valid;
-		isValid =
-			(isValid && this.buttonCard.classList.contains('button_alt-active')) ||
-			this.buttonCash.classList.contains('button_alt-active');
-		this.orderButton.disabled = !isValid;
-		return isValid;
-	}
+  protected validate(): boolean {
+    let isValid = this.commonValidate();
+    isValid = isValid && this.input.validity.valid;
+    isValid = isValid && (
+      this.buttonCard.classList.contains('button_alt-active') ||
+      this.buttonCash.classList.contains('button_alt-active')
+    );
+    
+    this.updateSubmitButton(isValid);
+    return isValid;
+  }
 }
+
 export { PayView };

@@ -17,8 +17,9 @@ private template: HTMLTemplateElement;
   const card = this.template.content.cloneNode(true) as HTMLElement;
     
   const price = card.querySelector('.card__price');
-  if (price && model.price) price.textContent = model.price.toString();
-    
+  if (price && model.price) {
+    price.textContent = `${model.price.toString()} cинапсов`;
+  }
   const title = card.querySelector('.card__title');
   if (title) title.textContent = model.title;
 
